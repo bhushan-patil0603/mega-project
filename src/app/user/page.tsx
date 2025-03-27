@@ -1,10 +1,7 @@
-
-import DataTable from './table'
+import DataTable from "./table";
 
 const page = () => {
-  return (
-    <DataTable/>
-  )
-}
+  return <DataTable />;
+};
 
-export default page
+export default page;
