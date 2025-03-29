@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { Toaster } from "@/components/ui/sonner";
 import {
   Table,
   TableBody,
@@ -9,9 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Member {
   id: string;
@@ -25,7 +26,31 @@ interface Member {
 
 export default function HomePage() {
   const [apiData, setApiData] = useState<Member[]>([]);
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [isOnline, setIsOnline] = useState<boolean>(true); // Default to true
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsOnline(navigator.onLine);
+
+      const handleOnline = () => {
+        setIsOnline(true);
+        toast("Back to Online!");
+      };
+
+      const handleOffline = () => {
+        setIsOnline(false);
+        toast("Oops! You are Offline!");
+      };
+
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+
+      return () => {
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
+      };
+    }
+  }, []);
 
   // Fetch data from API
   const getData = async () => {
@@ -48,25 +73,6 @@ export default function HomePage() {
     getData();
   }, []);
 
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      toast("Back to Online!");
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast("Oops! You are Offline!");
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
   // Reduce token logic
   const reduceToken = async (id: string) => {
     const member = apiData.find((obj) => obj.id === id);
@@ -75,12 +81,12 @@ export default function HomePage() {
       toast.error("Out of tokens");
       return;
     }
+
     const result = confirm(
       `Do you want to reduce token of register number ${member.reg_no} ${member.name}`
     );
-    if (!result) {
-      return;
-    }
+    if (!result) return;
+
     try {
       const response = await fetch(
         "https://pm-backend-au7h.onrender.com/update_token",
@@ -109,13 +115,14 @@ export default function HomePage() {
       {isOnline ? (
         <div>
           <Link href={"/newuser"}>
-          <button
-            type="button"
-            className="mb-5 rounded-md bg-blue-700 p-2 font-medium text-black hover:bg-blue-800 active:bg-blue-900"
-          >
-            Add new user +
-          </button></Link>
-          
+            <button
+              type="button"
+              className="mb-5 rounded-md bg-blue-700 p-2 font-medium text-black hover:bg-blue-800 active:bg-blue-900"
+            >
+              Add new member +
+            </button>
+          </Link>
+
           <Table className="border border-accent">
             <TableCaption>A list of your recent invoices.</TableCaption>
             <TableHeader>
