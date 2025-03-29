@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme";
 
 export const metadata: Metadata = {
-  title: "Next Essential | Elementary",
+  title: "Muktai Kitchen | Testy Vadapav",
   description:
     "Next Essential - An Essential Template to get started with Next.js application with all the essentials included...",
   icons: {
-    icon: "favicon.png",
+    icon: "image.png",
   },
   openGraph: {
     title: "Next Essential | Elementary",
